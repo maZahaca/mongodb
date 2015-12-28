@@ -3,6 +3,8 @@
 PASS=${MONGODB_PASS:-$(pwgen -s 12 1)}
 _word=$( [ ${MONGODB_PASS} ] && echo "preset" || echo "random" )
 
+ROLES=${MONGODB_ROLES:-'{role:"root",db:"admin"}'}
+
 RET=1
 while [[ RET -ne 0 ]]; do
     echo "=> Waiting for confirmation of MongoDB service startup"
@@ -12,7 +14,7 @@ while [[ RET -ne 0 ]]; do
 done
 
 echo "=> Creating an admin user with a ${_word} password in MongoDB"
-mongo admin --eval "db.createUser({user: 'admin', pwd: '$PASS', roles:[{role:'root',db:'admin'}]});"
+mongo admin --eval "db.createUser({user: 'admin', pwd: '$PASS', roles:[$ROLES]});"
 
 echo "=> Done!"
 touch /data/db/.mongodb_password_set
